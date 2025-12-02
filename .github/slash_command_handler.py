@@ -1,4 +1,4 @@
-# reference from SGLang 
+# reference from SGLang
 #   https://github.com/sgl-project/sglang/blob/main/scripts/ci/slash_command_handler.py
 import json
 import os
@@ -29,7 +29,7 @@ def load_permissions(user_login):
             print(f"Error: Permissions file not found at {PERMISSIONS_FILE_PATH}")
             return None
 
-        with open(PERMISSIONS_FILE_PATH, "r") as f:
+        with open(PERMISSIONS_FILE_PATH) as f:
             data = json.load(f)
 
         user_perms = data.get(user_login)
@@ -159,8 +159,8 @@ def main():
     repo = g.get_repo(repo_name)
     pr = repo.get_pull(pr_number)
     comment = repo.get_issue(pr_number).get_comment(comment_id)
-    
-    if "/tag-run-lint"  in comment.body.strip().lower():
+
+    if "/tag-run-lint" in comment.body.strip().lower():
         handle_tag_run_lint(repo, pr, comment, user_perms)
 
     # 4. Parse Command and Execute
@@ -176,12 +176,8 @@ def main():
         # Perform both actions, but suppress individual reactions
         print("Processing combined command: /tag-and-rerun-ci")
 
-        tagged = handle_tag_run_ci(
-            repo, pr, comment, user_perms, react_on_success=False
-        )
-        rerun = handle_rerun_failed_ci(
-            repo, pr, comment, user_perms, react_on_success=False
-        )
+        tagged = handle_tag_run_ci(repo, pr, comment, user_perms, react_on_success=False)
+        rerun = handle_rerun_failed_ci(repo, pr, comment, user_perms, react_on_success=False)
 
         # If at least one action was successful, add the reaction here
         if tagged or rerun:
