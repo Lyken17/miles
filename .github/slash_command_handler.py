@@ -6,6 +6,10 @@ import sys
 
 from github import Auth, Github
 
+DEFAULT_PERMISSIONS = {
+    "can_tag_run_ci_label": False,
+}
+
 # Configuration
 PERMISSIONS_FILE_PATH = ".github/CI_PERMISSIONS.json"
 

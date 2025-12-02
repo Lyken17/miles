@@ -31,8 +31,11 @@ jobs:
     #     github_token: ${{ secrets.GITHUB_TOKEN }}
     #     labels: lint wanted
     steps:
-      - name: Checkout code
+      - name: Check out Git repository
         uses: actions/checkout@v4
+        with:
+            # token: ${{ secrets.PAT }}
+            ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -53,3 +56,21 @@ jobs:
           USER_LOGIN: ${{ github.event.comment.user.login }}
         run: |
           python .github/slash_command_handler.py
+      
+      - name: Test pre-commit hooks
+        continue-on-error: true
+        uses: pre-commit/action@v3.0.1
+
+      - name: Check if there are any changes
+        id: verify_diff
+        run: |
+            git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit files
+        if: steps.verify_diff.outputs.changed == 'true'
+        run: |
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add .
+            git commit -m "[CI-Lint] Fix code style issues with pre-commit ${{ github.sha }}" -a
+            git push
