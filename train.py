@@ -13,9 +13,13 @@ from miles.utils.tracking_utils import init_tracking
 
 
 def train(args):
+
+    
     configure_logger()
     # allocate the GPUs
     pgs = create_placement_groups(args)
+
+    
     init_tracking(args)
 
     # create the rollout manager, with sglang engines inside.
