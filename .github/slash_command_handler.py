@@ -7,7 +7,7 @@ import sys
 from github import Auth, Github
 
 DEFAULT_PERMISSIONS = {
-    "can_tag_run_ci_label": False,
+    "can_tag_run_lint_label": True,
 }
 
 # Configuration
@@ -31,7 +31,7 @@ def load_permissions(user_login):
         print(f"Loading permissions from {PERMISSIONS_FILE_PATH}...")
         if not os.path.exists(PERMISSIONS_FILE_PATH):
             print(f"Error: Permissions file not found at {PERMISSIONS_FILE_PATH}")
-            return None
+            return DEFAULT_PERMISSIONS
 
         with open(PERMISSIONS_FILE_PATH) as f:
             data = json.load(f)
@@ -40,7 +40,7 @@ def load_permissions(user_login):
 
         if not user_perms:
             print(f"User '{user_login}' not found in permissions file.")
-            return None
+            return DEFAULT_PERMISSIONS
 
         return user_perms
 
