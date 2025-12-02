@@ -1,0 +1,36 @@
+---
+name: Auto Tag
+on:
+    pull_request:
+        types:
+            - opened
+            - edited
+            - closed
+            - reopened
+            - synchronize
+            - labeled
+            - unlabeled
+    issue_comment:
+        types:
+            - created
+
+# run only one unit test for a branch / tag.
+concurrency:
+    group: bot-add-tag-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    add-label-by-comment:
+        if: |
+            github.event_name == 'issue_comment' && 
+            github.event.issue.pull_request && 
+            startsWith(github.event.comment.body, '/tag-run-lint')
+        runs-on: ubuntu-latest
+        permissions:
+            pull-requests: write
+        steps:
+            - name: Add lint wanted label
+              uses: actions-ecosystem/action-add-labels@v1
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  labels: lint wanted
