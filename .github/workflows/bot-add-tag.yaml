@@ -24,6 +24,8 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
+          // Delay to ensure label removal is processed before re-adding
+          // This prevents race conditions in workflow triggering
           const LABEL_REMOVAL_DELAY_MS = 1000;
           
           // Remove the label if it exists, then add it
@@ -35,7 +37,8 @@ jobs:
               issue_number: context.issue.number,
               name: 'lint wanted'
             });
-            // Wait a bit to ensure the removal is processed
+            // Wait to ensure GitHub's label removal event is fully processed
+            // before adding the label back, preventing race conditions
             await new Promise(resolve => setTimeout(resolve, LABEL_REMOVAL_DELAY_MS));
           } catch (error) {
             // Label might not exist, that's okay
