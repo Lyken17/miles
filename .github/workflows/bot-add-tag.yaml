@@ -47,6 +47,14 @@ jobs:
         continue-on-error: true
         uses: pre-commit/action@v3.0.1
 
+      - name: Get PR branch name
+        id: get_branch
+        run: |
+            BRANCH_NAME=$(gh pr view ${{ github.event.issue.number }} --json headRefName --jq '.headRefName')
+            echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check if there are any changes
         id: verify_diff
         run: |
@@ -59,7 +67,7 @@ jobs:
             git config --local user.name "GitHub Action"
             git add .
             git commit -m "[CI-Lint] Fix code style issues with pre-commit ${{ github.sha }}" -a
-            git push origin HEAD:${{ github.event.issue.number }}
+            git push origin HEAD:refs/heads/${{ steps.get_branch.outputs.branch_name }}
       
       - name: Remove label(s) after lint
         if: always()
