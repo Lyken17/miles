@@ -24,6 +24,8 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
+          const LABEL_REMOVAL_DELAY_MS = 1000;
+          
           // Remove the label if it exists, then add it
           // This ensures the 'labeled' event is triggered
           try {
@@ -34,10 +36,10 @@ jobs:
               name: 'lint wanted'
             });
             // Wait a bit to ensure the removal is processed
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, LABEL_REMOVAL_DELAY_MS));
           } catch (error) {
             // Label might not exist, that's okay
-            console.log('Label not found or already removed');
+            console.log('Label removal failed (label may not exist):', error.message);
           }
           
           // Add the label, which should trigger the lint workflow
