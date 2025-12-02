@@ -10,9 +10,6 @@ on:
             - synchronize
             - labeled
             - unlabeled
-    issue_comment:
-        types:
-            - created
 
 # run only one unit test for a branch / tag.
 concurrency:
