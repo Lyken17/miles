@@ -12,15 +12,12 @@ permissions:
   issues: write        # Required for comment reactions in some contexts
 
 jobs:
-  slash_command:
+  slash_lint_wanted:
     # Only run if it is a PR comment with a recognized command
     if: >
       github.event_name == 'issue_comment' &&
       github.event.issue.pull_request &&
-      (contains(github.event.comment.body, '/tag-run-ci-label') ||
-       contains(github.event.comment.body, '/tag-run-lint') ||
-       contains(github.event.comment.body, '/rerun-failed-ci') ||
-       contains(github.event.comment.body, '/tag-and-rerun-ci'))
+      contains(github.event.comment.body, '/tag-run-lint')
     runs-on: ubuntu-latest
     # steps:
     # - name: Add lint wanted label
