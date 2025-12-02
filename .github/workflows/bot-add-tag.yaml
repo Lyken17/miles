@@ -22,9 +22,32 @@ jobs:
        contains(github.event.comment.body, '/rerun-failed-ci') ||
        contains(github.event.comment.body, '/tag-and-rerun-ci'))
     runs-on: ubuntu-latest
+    # steps:
+    # - name: Add lint wanted label
+    #   uses: actions-ecosystem/action-add-labels@v1
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     labels: lint wanted
     steps:
-    - name: Add lint wanted label
-      uses: actions-ecosystem/action-add-labels@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        labels: lint wanted
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install PyGithub
+
+      - name: Handle Slash Command
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_FULL_NAME: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          USER_LOGIN: ${{ github.event.comment.user.login }}
+        run: |
+          python scripts/ci/slash_command_handler.py
