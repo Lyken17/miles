@@ -21,7 +21,11 @@ concurrency:
 
 jobs:
     add-label-by-comment:
-        if: contains(github.event.comment.body, '/tag-run-lint')
+        # if: contains(github.event.comment.body, '/tag-run-lint')
+        if: >
+          github.event.issue.pull_request &&
+          (contains(github.event.comment.body, '/tag-run-lint') ||
+           contains(github.event.comment.body, '/tag-and-rerun-ci'))
         runs-on: ubuntu-latest
         permissions:
             pull-requests: write
