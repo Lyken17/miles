@@ -1,18 +1,8 @@
 ---
 name: Auto Tag
 on:
-    pull_request:
-        types:
-            - opened
-            - edited
-            - closed
-            - reopened
-            - synchronize
-            - labeled
-            - unlabeled
-    issue_comment:
-        types:
-            - created
+  issue_comment:
+    types: [created, edited]
 
 # run only one unit test for a branch / tag.
 concurrency:
